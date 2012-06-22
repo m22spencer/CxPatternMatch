@@ -3,7 +3,8 @@ CxPatternMatch
 
 Experimental pattern matching extension for Haxe
 
-=Why?=
+Why
+---
     I'm very very excited about the pattern matching support coming in 3.0, and can't wait for summer to try it out.
     Also, testing to see how verbose it can become while adhering to somewhat haxe-ish syntax.
 

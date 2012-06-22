@@ -8,39 +8,45 @@ Experimental pattern matching extension for Haxe
     Also, testing to see how verbose it can become while adhering to somewhat haxe-ish syntax.
 
 
-=IMPORTANT=
+IMPORTANT
+---------
 * Requires Haxe r4888 (2.10)
 * EXTREMELY BUGGY! This is a prototype.
 
 
 
-Usage:
+Usage
+-----
     P.match (switch value {
         case PATTERN: //do stuff
     });
 
 
-Basics:
+Basics
+------
     * _ represents "Any value". It is not stored for local scope usage.
     * x represents any value, but is stored for local scope usage. (eg: myVal, x, y, any variable name)
     * "MyString", 3.0, 10 will match exactly, and are not store for local scope usage
     * ~/MySt[A-Za-z]*/ will do a regex match on the field. 
 
 
-Enum matching:
+Enum matching
+-------------
     * Enum will recursively match (as will anything else)
         switch EConst (CIdent ("x")) {
             case EConst (CIdent (_)): trace ("I found a CIDent!");
             case _: trace ("Something else..."));
         }
 
-Structure matching:
+Structure matching
+------------------
     switch new flash.geom.Point () {
         case {x:xVal}: trace ("This structure contains x with val of -> " + xVal);
     }
 
 
-Iterable matching:
+Iterable matching
+-----------------
     * [] represents an empty set
     * a...list   a = head  list = tail:Iterable<T>;
         can be chained:  a...b...list
@@ -49,7 +55,8 @@ Iterable matching:
     * [a,b,c]  exact iterator match. Will only match if contains the proper number of passing elements
 
 
-=Example=
+Example
+=======
 
 var e = macro {
     var x = 10;

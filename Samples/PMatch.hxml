@@ -1,0 +1,10 @@
+-cp ../
+-x Main
+-lib tink_macros
+
+
+--next
+-cp ../
+-main Main
+-cs csbin
+-lib tink_macros

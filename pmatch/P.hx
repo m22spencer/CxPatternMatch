@@ -135,6 +135,24 @@ class CaseMatch {
                     }
                 default:
             }
+            case EObjectDecl (efields):
+                var lazy = [];
+                for (field in efields) {
+                    var temp_local = local (field.expr);
+                    var expr_fld = {expr:EConst (CString (field.field)), pos:Context.currentPos ()};
+                    var expr_vars = {expr:EVars ([{name:ident(temp_local), type:null, expr: macro Reflect.field ($value, $expr_fld)}]), pos:Context.currentPos ()};
+
+                    inject (function (inner) return macro {
+                            var fld = Reflect.field ($value, $expr_fld);
+                            if (fld != null) {
+                                $expr_vars;
+                                $inner;
+                            }
+                        });
+                    lazy.push (function () proc (temp_local, field.expr));
+                }
+                for (l in lazy) l ();
+
             case ECall (c,args):                            //Enum handling
                 var tfun:haxe.macro.Type = fetchtype (c);
                 switch tfun {
@@ -205,7 +223,7 @@ class CaseMatch {
                         for (l in lazy) l ();
                 }
             case EBinop (op, e1, e2):                           //List matching:  | _ :: l ->
-                trace ("binop on value: " + value);
+                //trace ("binop on value: " + value);
                 //trace ("Injection point: " + injection_point);
                 var lst = [];
                 function doBinOp (e:Expr) {
@@ -226,8 +244,8 @@ class CaseMatch {
                 //l...s...t...lstvar
                 var iterator = macro null;
                 iterator = eIterator (value);
-                trace ("Iterator: " + iterator + " of " + value);
-                trace (fetchtype (value));
+                //trace ("Iterator: " + iterator + " of " + value);
+                //trace (fetchtype (value));
 
                 exposedvars.set (ident (lstvar), fetchtype (value));
                 settype (lstvar, fetchtype (value));                                 //iterator
@@ -239,8 +257,9 @@ class CaseMatch {
                 var lazy = [];
                 for (l in lst) {
                     var temp_local = local (l);
-                    trace ("tlocal: " + temp_local + " -> type: " + subType (fetchtype (value))[0]);
-                    trace ("lstvar: " + fetchtype (lstvar));
+                    //trace ("tlocal: " + fetchtype (value));
+                    //trace ("tlocal: " + temp_local + " -> type: " + subType (fetchtype (value))[0]);
+                    //trace ("lstvar: " + fetchtype (lstvar));
                     settype (temp_local, subType (fetchtype (value))[0]);     //FIXME: Dynamic for idents..
                     var temp_decl = {expr:EVars ([{name:ident(temp_local), type:null, expr: macro $lstvar.next ()}]), pos: l.pos};
                     inject (function (inner) return macro
@@ -250,7 +269,7 @@ class CaseMatch {
                         });
                     lazy.push (function () proc (temp_local, l));
                 }
-                trace ("\n");
+                //trace ("\n");
                 for (l in lazy) l ();
             case EParenthesis (e):
                 //trace ("Proc paren: " + value + " -> " + e);
@@ -271,6 +290,7 @@ class CaseMatch {
     function subType (t:haxe.macro.Type) {
         return switch t {
             case TType (a, b): b;
+            case TInst (a, b): b;
             default: null;
         }
 

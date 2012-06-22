@@ -73,10 +73,9 @@ Example
         x;
     }
 
-    P.match (switch e {
-        case {expr:EBlock (
-            {expr: EVars (_)}...{expr: EConst (CIdent (s))}...l)}:
-                trace ("Is: " + s);
+    P.match (switch e.expr {
+        case EBlock ({expr: EVars (_)}...{expr: EConst (CIdent (s))}...l):
+                trace ("Block starts with :" + s);
     });
 
 
